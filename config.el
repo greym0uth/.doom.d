@@ -6,7 +6,7 @@
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
 (setq user-full-name "Jaden Giordano"
-      user-mail-address "thejadenjack@gmail.com")
+      user-mail-address "jgiordano@getpeaktoday.com")
 
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
@@ -20,7 +20,7 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-(setq doom-font (font-spec :family "Fira Mono for Powerline" :size 14)
+(setq doom-font (font-spec :family "FiraCode Nerd Font" :size 14)
       doom-variable-pitch-font (font-spec :family "open sans"))
 
 ;; There are two ways to load a theme. Both assume the theme is installed and
@@ -43,29 +43,10 @@
 (add-to-list `auto-mode-alist '("\\.ron\\'" . rustic-mode))
 
 (after! projectile
-  (setq projectile-project-search-path `("~/Development" "~/Development/rust"))
-  (projectile-register-project-type 'godot '("project.godot")))
+  (setq projectile-project-search-path `("~/Development")))
 
 (after! company
   (setq company-idle-delay 0.5))
-
-(server-start)
-
-;; GDScript
-;; Temporary workaround issues with the language server
-(defun franco/godot-gdscript--lsp-ignore-error (original-function &rest args)
-  "Ignore the error message resulting from Godot not replying to the `JSONRPC' request."
-  (if (string-equal major-mode "gdscript-mode")
-      (let ((json-data (nth 0 args)))
-        (if (and (string= (gethash "jsonrpc" json-data "") "2.0")
-                 (not (gethash "id" json-data nil))
-                 (not (gethash "method" json-data nil)))
-            nil
-          (apply original-function args)))
-    (apply original-function args)))
-
-(after! lsp
-  (advice-add #'lsp--get-message-type :around #'franco/godot-gdscript--lsp-ignore-error))
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -83,3 +64,5 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
+
+(use-package! lsp-tailwindcss)
